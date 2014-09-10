@@ -1,0 +1,4 @@
+name = Show More
+description = Field formatter to display long lists of checkboxes with a "show more" link to hide/show the other options.
+core = 7.x
+dependencies[] = options

@@ -1,0 +1,76 @@
+<?php
+/**
+ * @file
+ * Show more field formatter
+ */
+
+/**
+ * Implements hook_field_widget_info().
+ */
+function showmore_field_widget_info() {
+  return array(
+    'showmore' => array(
+      'label' => t('Text field'),
+      'field types' => array('list_text', 'list_integer', 'list_float'),
+      'settings' => array('show_num' => 5),
+      'behaviors' => array(
+        'multiple values' => FIELD_BEHAVIOR_DEFAULT,
+        'default value' => FIELD_BEHAVIOR_DEFAULT,
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_widget_settings_form().
+ */
+function showmore_field_widget_settings_form($field, $instance) {
+  $widget = $instance['widget'];
+  $settings = $widget['settings'];
+
+  if ($widget['type'] == 'showmore') {
+    $form['show_num'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Number to show'),
+      '#description' => t('Number of items to show before the "show more" link appears.'),
+      '#default_value' => $settings['show_num'],
+      '#element_validate' => array('_element_validate_integer_positive'),
+      '#required' => TRUE,
+    );
+  }
+
+  return $form;
+}
+
+/**
+ * Implements hook_field_widget_form().
+ */
+function showmore_field_widget_form(&$form, &$form_state, $field, $instance, $langcode, $items, $delta, $element) {
+  // If required and there is one single option, preselect it.
+  if ($required && count($options) == 1) {
+    reset($options);
+    $default_value = array(key($options));
+  }
+
+  // If this is a single-value field, take the first default value, or
+  // default to NULL so that the form element is properly recognized as
+  // not having a default value.
+  if (!$multiple) {
+    $default_value = $default_value ? reset($default_value) : NULL;
+  }
+
+  $element += array(
+    '#type' => 'checkboxes',
+    // Radio buttons need a scalar value.
+    '#default_value' => $default_value,
+    '#options' => $options,
+  );
+
+  $element += array(
+    '#value_key' => $value_key,
+    '#element_validate' => array('options_field_widget_validate'),
+    '#properties' => $properties,
+  );
+
+  return $element;
+}
