@@ -10,7 +10,7 @@
 function showmore_field_widget_info() {
   return array(
     'showmore' => array(
-      'label' => t('Text field'),
+      'label' => t('Show more'),
       'field types' => array('list_text', 'list_integer', 'list_float'),
       'settings' => array('show_num' => 5),
       'behaviors' => array(
